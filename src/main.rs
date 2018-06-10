@@ -1,7 +1,6 @@
 fn main() {
     let mut table = PreTable::new();
-    table.add_header("name");
-    table.add_header("value");
+    table.set_header(vec!["name", "value"]);
     table.add_body(vec!["name1", "value1"]);
     table.add_body(vec!["name1dsfsdf", "vdsfdsfalue"]);
     println!("{}", table.output());
@@ -27,6 +26,15 @@ impl PreTable {
 
         let n = v.len();
         self.max.push(n);
+    }
+
+    pub fn set_header(&mut self, v: Vec<&str>) {
+        self.header = Vec::new();
+        self.max = Vec::new();
+
+        for value in v {
+            self.add_header(value);
+        }
     }
 
     fn add_body(&mut self, v: Vec<&str>) {
@@ -65,11 +73,11 @@ impl PreTable {
     }
 
     fn body(&self) -> String {
-        let mut max_iter = self.max.iter();
         let v: Vec<String> = self.body.iter().map(|v| {
             let mut s = "|".to_string();
-            let m = max_iter.next().unwrap();
+            let mut max_iter = self.max.iter();
             for n in 0..self.header.len() {
+                let m = max_iter.next().unwrap();
                 let ref value = v[n];
                 s += &format!("{}|", Self::format_center(value, m + 2));                
             }
