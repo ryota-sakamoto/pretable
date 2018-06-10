@@ -3,6 +3,7 @@ fn main() {
     table.set_header(vec!["name", "value"]);
     table.add_body(vec!["name1", "value1", "sddsf"]);
     table.add_body(vec!["name1dsfsdf", "vdsfdsfalue"]);
+    table.show_header(false);
     println!("{}", table.output());
 }
 
@@ -10,6 +11,7 @@ struct PreTable {
     header: Vec<String>,
     body: Vec<Vec<String>>,
     max: Vec<usize>,
+    show_header: bool,
 }
 
 impl PreTable {
@@ -18,6 +20,7 @@ impl PreTable {
             header: Vec::new(),
             body: Vec::new(),
             max: Vec::new(),
+            show_header: true,
         }
     }
 
@@ -102,7 +105,7 @@ impl PreTable {
 
     fn output(self) -> String {
         let mut s = format!("{}\n", self.line());
-        if !self.header.is_empty() {
+        if self.show_header && !self.header.is_empty() {
             s += &format!("{}\n", self.header());
             s += &format!("{}\n", self.line());
         }
@@ -111,6 +114,10 @@ impl PreTable {
             s += &format!("{}\n", self.line());
         }
         s
+    }
+
+    fn show_header(&mut self, b: bool) {
+        self.show_header = b;
     }
 
     fn dush(count: usize) -> String {
