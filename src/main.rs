@@ -97,14 +97,15 @@ impl PreTable {
     }
 
     fn output(self) -> String {
-        let s = format!(
-            "{}\n{}\n{}\n{}\n{}\n",
-            &self.line(),
-            &self.header(),
-            &self.line(),
-            &self.body(),
-            &self.line(),
-        );
+        let mut s = format!("{}\n", self.line());
+        if !self.header.is_empty() {
+            s += &format!("{}\n", self.header());
+            s += &format!("{}\n", self.line());
+        }
+        if !self.body.is_empty() {
+            s += &format!("{}\n", self.body());
+            s += &format!("{}\n", self.line());
+        }
         s
     }
 
