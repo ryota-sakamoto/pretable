@@ -38,10 +38,8 @@ impl PreTable {
     }
 
     fn add_body(&mut self, v: Vec<&str>) {
-        self.body.push(v.iter().map(|s| {
-            s.to_string()
-        }).collect());
-        
+        self.body.push(v.iter().map(|s| s.to_string()).collect());
+
         for n in 0..v.len() {
             let l = v[n].len();
             let m = self.max[n];
@@ -58,7 +56,7 @@ impl PreTable {
             let c = self.max[n];
             line += &format!("{}+", Self::dush(c + 2));
         }
-        
+
         line
     }
 
@@ -73,21 +71,34 @@ impl PreTable {
     }
 
     fn body(&self) -> String {
-        let v: Vec<String> = self.body.iter().map(|v| {
-            let mut s = "|".to_string();
-            let mut max_iter = self.max.iter();
-            for n in 0..self.header.len() {
-                let m = max_iter.next().unwrap();
-                let ref value = v[n];
-                s += &format!("{}|", Self::format_center(value, m + 2));                
-            }
-            s
-        }).collect();
+        let v: Vec<String> = self.body
+            .iter()
+            .map(|v| {
+                let mut s = "|".to_string();
+                let mut max_iter = self.max.iter();
+                for n in 0..self.header.len() {
+                    let m = max_iter.next().unwrap();
+                    let value = v.get(n);
+                    s += &format!(
+                        "{}|",
+                        Self::format_center(
+                            match value {
+                                Some(v) => v,
+                                None => "",
+                            },
+                            m + 2
+                        )
+                    );
+                }
+                s
+            })
+            .collect();
         v.join("\n")
     }
 
     fn output(self) -> String {
-        let s = format!("{}\n{}\n{}\n{}\n{}\n",
+        let s = format!(
+            "{}\n{}\n{}\n{}\n{}\n",
             &self.line(),
             &self.header(),
             &self.line(),
