@@ -1,13 +1,4 @@
-fn main() {
-    let mut table = PreTable::new();
-    table.set_header(vec!["name", "value"]);
-    table.add_body(vec!["name1", "value1", "sddsf"]);
-    table.add_body(vec!["name1dsfsdf", "vdsfdsfalue"]);
-    table.show_header(false);
-    println!("{}", table.output());
-}
-
-struct PreTable {
+pub struct PreTable {
     header: Vec<String>,
     body: Vec<Vec<String>>,
     max: Vec<usize>,
@@ -24,7 +15,7 @@ impl PreTable {
         }
     }
 
-    fn add_header(&mut self, v: &str) {
+    pub fn add_header(&mut self, v: &str) {
         self.header.push(v.to_string());
 
         let n = v.len();
@@ -40,7 +31,7 @@ impl PreTable {
         }
     }
 
-    fn add_body(&mut self, v: Vec<&str>) {
+    pub fn add_body(&mut self, v: Vec<&str>) {
         self.body.push(v.iter().map(|s| s.to_string()).collect());
 
         while self.max.len() < v.len() {
@@ -103,7 +94,7 @@ impl PreTable {
         v.join("\n")
     }
 
-    fn output(self) -> String {
+    pub fn output(self) -> String {
         let mut s = format!("{}\n", self.line());
         if self.show_header && !self.header.is_empty() {
             s += &format!("{}\n", self.header());
