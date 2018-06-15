@@ -4,6 +4,9 @@ pub struct PreTable {
     max: Vec<usize>,
     show_header: bool,
     is_body_split: bool,
+    line_char: char,
+    vertical_char: char,
+    corner_char: char,
 }
 
 impl PreTable {
@@ -14,6 +17,9 @@ impl PreTable {
             max: Vec::new(),
             show_header: true,
             is_body_split: false,
+            line_char: '-',
+            vertical_char: '|',
+            corner_char: '+',
         }
     }
 
@@ -50,22 +56,23 @@ impl PreTable {
     }
 
     fn line(&self) -> String {
-        let mut line = "+".to_string();
+        let mut line = self.corner_char.to_string();
+        let lc = &self.line_char.to_string();
 
         for n in 0..self.header.len() {
             let c = self.max[n];
-            line += &format!("{}+", Self::dush(c + 2));
+            line += &format!("{}{}", Self::repeat(lc, c + 2), self.corner_char);
         }
 
         line
     }
 
     fn header(&self) -> String {
-        let mut s = "|".to_string();
+        let mut s = self.vertical_char.to_string();
         for n in 0..self.header.len() {
             let ref h = self.header[n];
             let ref m = self.max[n];
-            s += &format!("{}|", Self::format_center(h, m + 2));
+            s += &format!("{}{}", Self::format_center(h, m + 2), self.vertical_char);
         }
         s
     }
@@ -74,20 +81,21 @@ impl PreTable {
         self.body
             .iter()
             .map(|v| {
-                let mut s = "|".to_string();
+                let mut s = self.vertical_char.to_string();
                 let mut max_iter = self.max.iter();
                 for n in 0..self.header.len() {
                     let m = max_iter.next().unwrap();
                     let value = v.get(n);
                     s += &format!(
-                        "{}|",
+                        "{}{}",
                         Self::format_center(
                             match value {
                                 Some(v) => v,
                                 None => "",
                             },
                             m + 2
-                        )
+                        ),
+                        self.vertical_char
                     );
                 }
                 s
@@ -124,8 +132,16 @@ impl PreTable {
         self.is_body_split = b;
     }
 
-    fn dush(count: usize) -> String {
-        Self::repeat("-", count)
+    pub fn set_line_char(&mut self, c: char) {
+        self.line_char = c;
+    }
+
+    pub fn set_vertical_char(&mut self, c: char) {
+        self.vertical_char = c;
+    }
+
+    pub fn set_corner_char(&mut self, c: char) {
+        self.corner_char = c;
     }
 
     fn format_center(v: &str, count: usize) -> String {

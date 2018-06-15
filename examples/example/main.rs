@@ -21,6 +21,9 @@ fn main() {
     ]);
     // table.add_body(vec!["name1dsfsdf", "vdsfdsfalue"]);
     // table.show_header(false);
-    table.is_body_split(true);
+    // table.is_body_split(true);
+    // table.set_line_char(' ');
+    // table.set_vertical_char(' ');
+    // table.set_corner_char(' ');
     println!("{}", table.output());
 }
