@@ -3,6 +3,7 @@ pub struct PreTable {
     body: Vec<Vec<String>>,
     max: Vec<usize>,
     show_header: bool,
+    is_body_split: bool,
 }
 
 impl PreTable {
@@ -12,6 +13,7 @@ impl PreTable {
             body: Vec::new(),
             max: Vec::new(),
             show_header: true,
+            is_body_split: false,
         }
     }
 
@@ -68,8 +70,8 @@ impl PreTable {
         s
     }
 
-    fn body(&self) -> String {
-        let v: Vec<String> = self.body
+    fn body(&self) -> Vec<String> {
+        self.body
             .iter()
             .map(|v| {
                 let mut s = "|".to_string();
@@ -90,8 +92,7 @@ impl PreTable {
                 }
                 s
             })
-            .collect();
-        v.join("\n")
+            .collect()
     }
 
     pub fn output(self) -> String {
@@ -101,14 +102,26 @@ impl PreTable {
             s += &format!("{}\n", self.line());
         }
         if !self.body.is_empty() {
-            s += &format!("{}\n", self.body());
-            s += &format!("{}\n", self.line());
+            let body = self.body();
+            if self.is_body_split {
+                for b in body {
+                    s += &format!("{}\n", b);
+                    s += &format!("{}\n", self.line());
+                }
+            } else {
+                s += &format!("{}\n", body.join("\n"));
+                s += &format!("{}\n", self.line());
+            }
         }
         s
     }
 
     fn show_header(&mut self, b: bool) {
         self.show_header = b;
+    }
+
+    pub fn is_body_split(&mut self, b: bool) {
+        self.is_body_split = b;
     }
 
     fn dush(count: usize) -> String {
