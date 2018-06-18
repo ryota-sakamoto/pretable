@@ -124,7 +124,7 @@ impl PreTable {
         s
     }
 
-    fn show_header(&mut self, b: bool) {
+    pub fn show_header(&mut self, b: bool) {
         self.show_header = b;
     }
 
