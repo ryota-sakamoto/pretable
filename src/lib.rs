@@ -69,7 +69,7 @@ impl PreTable {
         }).collect();
         let value_len_vec: Vec<_> = self.items.iter().map(|item| item.max_value_len).collect();
 
-        let mut vec = Vec::new();
+        let mut vec = Vec::with_capacity(self.body_length);
         for _ in 0..self.body_length {
             let r = v.next();
             let mut l = value_len_vec.iter();
