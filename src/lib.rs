@@ -159,7 +159,7 @@ trait SliceItarator {
 
 impl<'a> SliceItarator for Vec<std::slice::Iter<'a, String>> {
     fn next(&mut self) -> Vec<Option<&String>> {
-        let mut values = Vec::new();
+        let mut values = Vec::with_capacity(self.len());
         for v in self {
             let mut v = v;
             values.push(v.next());
