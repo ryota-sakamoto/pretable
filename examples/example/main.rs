@@ -16,7 +16,7 @@ fn main() {
         "ubuntu",
         "18.04",
         "452a96d81c30",
-        "6 weeks ago",
+        "7 weeks ago",
         "79.6MB",
     ]);
     // table.add_body(vec!["name1dsfsdf", "vdsfdsfalue"]);

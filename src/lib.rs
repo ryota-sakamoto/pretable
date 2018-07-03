@@ -1,7 +1,8 @@
+#[derive(Debug)]
 pub struct PreTable {
-    header: Vec<String>,
-    body: Vec<Vec<String>>,
-    max: Vec<usize>,
+    items: Vec<Item>,
+    header_len: usize,
+    body_length: usize,
     show_header: bool,
     is_body_split: bool,
     line_char: char,
@@ -12,9 +13,9 @@ pub struct PreTable {
 impl PreTable {
     pub fn new() -> Self {
         Self {
-            header: Vec::new(),
-            body: Vec::new(),
-            max: Vec::new(),
+            items: Vec::new(),
+            header_len: 0,
+            body_length: 0,
             show_header: true,
             is_body_split: false,
             line_char: '-',
@@ -24,102 +25,82 @@ impl PreTable {
     }
 
     pub fn add_header(&mut self, v: &str) {
-        self.header.push(v.to_string());
-
-        let n = v.len();
-        self.max.push(n);
+        self.items.push(Item::new(v));
+        self.header_len = self.items.len();
     }
 
     pub fn set_header(&mut self, v: Vec<&str>) {
-        self.header = Vec::new();
-        self.max = Vec::new();
-
+        self.items = Vec::new();
         for value in v {
             self.add_header(value);
         }
     }
 
     pub fn add_body(&mut self, v: Vec<&str>) {
-        self.body.push(v.iter().map(|s| s.to_string()).collect());
-
-        while self.max.len() < v.len() {
-            self.max.push(0);
-        }
-
-        for n in 0..v.len() {
-            let l = v[n].len();
-            let m = self.max[n];
-            if m < l {
-                self.max[n] = l;
+        self.body_length += 1;
+        for n in 0..self.header_len {
+            let value = v[n];
+            self.items[n].value.push(value.to_string());
+            if self.items[n].max_value_len < value.len() {
+                self.items[n].max_value_len = value.len();
             }
         }
     }
 
-    fn line(&self) -> String {
-        let mut line = self.corner_char.to_string();
-        let lc = &self.line_char.to_string();
+    pub fn line(&self) -> String {
+        let s: Vec<String> = self.items.iter().map(|item| {
+            format!("{}{}", self.corner_char, Self::repeat(&self.line_char.to_string(), item.max_value_len + 2))
+        }).collect();
 
-        for n in 0..self.header.len() {
-            let c = self.max[n];
-            line += &format!("{}{}", Self::repeat(lc, c + 2), self.corner_char);
-        }
-
-        line
+        format!("{}{}", s.join(""), self.corner_char)
     }
 
     fn header(&self) -> String {
-        let mut s = self.vertical_char.to_string();
-        for n in 0..self.header.len() {
-            let ref h = self.header[n];
-            let ref m = self.max[n];
-            s += &format!("{}{}", Self::format_center(h, m + 2), self.vertical_char);
-        }
-        s
+        let s: Vec<String> = self.items.iter().map(|item| {
+            format!("{}{}", self.vertical_char, Self::format_center(&item.key, &item.max_value_len + 2))
+        }).collect();
+
+        format!("{}{}", s.join(""), self.vertical_char)
     }
 
     fn body(&self) -> Vec<String> {
-        self.body
-            .iter()
-            .map(|v| {
-                let mut s = self.vertical_char.to_string();
-                let mut max_iter = self.max.iter();
-                for n in 0..self.header.len() {
-                    let m = max_iter.next().unwrap();
-                    let value = v.get(n);
-                    s += &format!(
-                        "{}{}",
-                        Self::format_center(
-                            match value {
-                                Some(v) => v,
-                                None => "",
-                            },
-                            m + 2
-                        ),
-                        self.vertical_char
-                    );
-                }
-                s
-            })
-            .collect()
+        let mut v: Vec<_> = self.items.iter().map(|item| {
+            item.value.iter()
+        }).collect();
+        let value_len_vec: Vec<_> = self.items.iter().map(|item| item.max_value_len).collect();
+
+        let mut vec = Vec::new();
+        for _ in 0..self.body_length {
+            let r = v.next();
+            let mut l = value_len_vec.iter();
+
+            let result: Vec<_> = r.iter().map(|value| {
+                format!("{}{}", self.vertical_char, Self::format_center(match value {
+                    &Some(vv) => vv,
+                    &None => "",
+                }, *l.next().unwrap() + 2))
+            }).collect();
+            vec.push(format!("{}{}", result.join(""), self.vertical_char));
+        }
+
+        vec
     }
 
     pub fn output(self) -> String {
         let mut s = format!("{}\n", self.line());
-        if self.show_header && !self.header.is_empty() {
+        if self.show_header && !self.items.is_empty() {
             s += &format!("{}\n", self.header());
             s += &format!("{}\n", self.line());
         }
-        if !self.body.is_empty() {
-            let body = self.body();
-            if self.is_body_split {
-                for b in body {
-                    s += &format!("{}\n", b);
-                    s += &format!("{}\n", self.line());
-                }
-            } else {
-                s += &format!("{}\n", body.join("\n"));
+        let body = self.body();
+        if self.is_body_split {
+            for b in body {
+                s += &format!("{}\n", b);
                 s += &format!("{}\n", self.line());
             }
+        } else {
+            s += &format!("{}\n", body.join("\n"));
+            s += &format!("{}\n", self.line());
         }
         s
     }
@@ -156,5 +137,37 @@ impl PreTable {
             v += s;
         }
         v
+    }
+}
+
+#[derive(Debug)]
+pub struct Item {
+    key: String,
+    value: Vec<String>,
+    max_value_len: usize,
+}
+
+impl Item {
+    fn new(key: &str) -> Self {
+        Self {
+            key: key.to_string(),
+            value: Vec::new(),
+            max_value_len: key.len(),
+        }
+    }
+}
+
+trait SliceItarator {
+    fn next(&mut self) -> Vec<Option<&String>>;
+}
+
+impl<'a> SliceItarator for Vec<std::slice::Iter<'a, String>> {
+    fn next(&mut self) -> Vec<Option<&String>> {
+        let mut values = Vec::new();
+        for v in self {
+            let mut v = v;
+            values.push(v.next());
+        }
+        values
     }
 }
