@@ -132,11 +132,8 @@ impl PreTable {
     }
 
     fn repeat(s: &str, count: usize) -> String {
-        let mut v = String::new();
-        for _ in 0..count {
-            v = format!("{}{}", v, s);
-        }
-        v
+        let b = s.as_bytes()[0];
+        String::from_utf8(vec![b; count]).unwrap()
     }
 }
 
