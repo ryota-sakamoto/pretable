@@ -134,7 +134,7 @@ impl PreTable {
     fn repeat(s: &str, count: usize) -> String {
         let mut v = String::new();
         for _ in 0..count {
-            v += s;
+            v = format!("{}{}", v, s);
         }
         v
     }
