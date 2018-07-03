@@ -128,7 +128,7 @@ impl PreTable {
     fn format_center(v: &str, count: usize) -> String {
         let start = (count - v.len()) / 2;
         let end = count - v.len() - start;
-        Self::repeat(" ", start) + v + &Self::repeat(" ", end)
+        format!("{}{}{}", Self::repeat(" ", start), v, Self::repeat(" ", end))
     }
 
     fn repeat(s: &str, count: usize) -> String {
