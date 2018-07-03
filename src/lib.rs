@@ -49,7 +49,7 @@ impl PreTable {
 
     pub fn line(&self) -> String {
         let s: Vec<String> = self.items.iter().map(|item| {
-            format!("{}{}", self.corner_char, Self::repeat(&self.line_char.to_string(), item.max_value_len + 2))
+            format!("{}{}", self.corner_char, Self::repeat(self.line_char as u8, item.max_value_len + 2))
         }).collect();
 
         format!("{}{}", s.join(""), self.corner_char)
@@ -128,12 +128,11 @@ impl PreTable {
     fn format_center(v: &str, count: usize) -> String {
         let start = (count - v.len()) / 2;
         let end = count - v.len() - start;
-        format!("{}{}{}", Self::repeat(" ", start), v, Self::repeat(" ", end))
+        format!("{}{}{}", Self::repeat(b' ', start), v, Self::repeat(b' ', end))
     }
 
-    fn repeat(s: &str, count: usize) -> String {
-        let b = s.as_bytes()[0];
-        String::from_utf8(vec![b; count]).unwrap()
+    fn repeat(s: u8, count: usize) -> String {
+        String::from_utf8(vec![s; count]).unwrap()
     }
 }
 
