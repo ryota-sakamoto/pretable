@@ -72,13 +72,17 @@ impl PreTable {
         let mut vec = Vec::with_capacity(self.body_length);
         for _ in 0..self.body_length {
             let r = v.next();
-            let mut l = value_len_vec.iter();
+            let mut n = 0;
+            let mut inc = || {
+                n += 1;
+                n - 1
+            };
 
             let result: Vec<_> = r.iter().map(|value| {
                 format!("{}{}", self.vertical_char, Self::format_center(match value {
                     &Some(vv) => vv,
                     &None => "",
-                }, *l.next().unwrap() + 2))
+                }, value_len_vec[inc()] + 2))
             }).collect();
             vec.push(format!("{}{}", result.join(""), self.vertical_char));
         }
