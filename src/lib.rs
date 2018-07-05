@@ -25,7 +25,13 @@ impl PreTable {
     }
 
     pub fn add_header(&mut self, v: &str) {
-        self.items.push(Item::new(v));
+        self.add_header_with_format(v, ItemFormat::Default);
+    }
+
+    pub fn add_header_with_format(&mut self, v: &str, format: ItemFormat) {
+        let mut item = Item::new(v);
+        item.format = format;
+        self.items.push(item);
         self.header_len = self.items.len();
     }
 
@@ -141,6 +147,7 @@ pub struct Item {
     key: String,
     value: Vec<String>,
     max_value_len: usize,
+    format: ItemFormat,
 }
 
 impl Item {
@@ -149,6 +156,7 @@ impl Item {
             key: key.to_string(),
             value: Vec::new(),
             max_value_len: key.len(),
+            format: ItemFormat::Default,
         }
     }
 }
@@ -166,4 +174,10 @@ impl<'a> SliceItarator for Vec<std::slice::Iter<'a, String>> {
         }
         values
     }
+}
+
+#[derive(Debug)]
+pub enum ItemFormat {
+    Default,
+    Format(String),
 }
