@@ -52,7 +52,7 @@ impl PreTable {
             format!("{}{}", self.corner_char, Self::repeat(self.line_char as u8, item.max_value_len + 2))
         }).collect();
 
-        format!("{}{}", s.join(""), self.corner_char)
+        format!("{}{}", s.concat(), self.corner_char)
     }
 
     fn header(&self) -> String {
@@ -60,7 +60,7 @@ impl PreTable {
             format!("{}{}", self.vertical_char, Self::format_center(&item.key, &item.max_value_len + 2))
         }).collect();
 
-        format!("{}{}", s.join(""), self.vertical_char)
+        format!("{}{}", s.concat(), self.vertical_char)
     }
 
     fn body(&self) -> Vec<String> {
@@ -84,7 +84,7 @@ impl PreTable {
                     &None => "",
                 }, value_len_vec[inc()] + 2))
             }).collect();
-            vec.push(format!("{}{}", result.join(""), self.vertical_char));
+            vec.push(format!("{}{}", result.concat(), self.vertical_char));
         }
 
         vec
