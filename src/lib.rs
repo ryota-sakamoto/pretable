@@ -136,7 +136,9 @@ impl PreTable {
     }
 
     fn repeat(s: u8, count: usize) -> String {
-        String::from_utf8(vec![s; count]).unwrap()
+        unsafe {
+            String::from_utf8_unchecked(vec![s; count])
+        }
     }
 }
 
