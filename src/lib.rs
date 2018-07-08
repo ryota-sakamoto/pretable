@@ -49,7 +49,7 @@ impl PreTable {
 
     pub fn line(&self) -> String {
         let s: Vec<String> = self.items.iter().map(|item| {
-            format!("{}{}", self.corner_char, Self::repeat(self.line_char as u8, item.max_value_len + 2))
+            format!("{}{}", self.corner_char, std::iter::repeat(' ').take(item.max_value_len + 2).collect::<String>())
         }).collect();
 
         format!("{}{}", s.concat(), self.corner_char)
@@ -141,12 +141,6 @@ impl PreTable {
         buf.extend(std::iter::repeat(' ').take(start));
         *buf += v;
         buf.extend(std::iter::repeat(' ').take(end));
-    }
-
-    fn repeat(s: u8, count: usize) -> String {
-        unsafe {
-            String::from_utf8_unchecked(vec![s; count])
-        }
     }
 }
 
