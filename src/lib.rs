@@ -53,7 +53,10 @@ impl PreTable {
 
     pub fn line(&self) -> String {
         let s: Vec<String> = self.items.iter().map(|item| {
-            format!("{}{}", self.corner_char, std::iter::repeat(self.line_char).take(item.max_value_len + 2).collect::<String>())
+            let mut s = String::with_capacity(1 + item.max_value_len + 2);
+            s.push(self.corner_char);
+            s.extend(std::iter::repeat(self.line_char).take(item.max_value_len + 2));
+            s
         }).collect();
 
         format!("{}{}", s.concat(), self.corner_char)
