@@ -57,7 +57,9 @@ impl PreTable {
 
     fn header(&self) -> String {
         let s: Vec<String> = self.items.iter().map(|item| {
-            format!("{}{}", self.vertical_char, Self::format_center(&item.key, &item.max_value_len + 2))
+            let mut s = self.vertical_char.to_string();
+            Self::format_center(&item.key, &item.max_value_len + 2, &mut s);
+            s
         }).collect();
 
         format!("{}{}", s.concat(), self.vertical_char)
@@ -78,13 +80,16 @@ impl PreTable {
                 n - 1
             };
 
-            let result: Vec<_> = r.iter().map(|value| {
-                format!("{}{}", self.vertical_char, Self::format_center(match value {
+            let mut result = String::new();
+            for ref value in r {
+                result.push(self.vertical_char);
+                Self::format_center(match value {
                     &Some(vv) => vv,
                     &None => "",
-                }, value_len_vec[inc()] + 2))
-            }).collect();
-            vec.push(format!("{}{}", result.concat(), self.vertical_char));
+                }, value_len_vec[inc()] + 2, &mut result);
+            }
+            result.push(self.vertical_char);
+            vec.push(result);
         }
 
         vec
@@ -129,10 +134,13 @@ impl PreTable {
         self.corner_char = c;
     }
 
-    fn format_center(v: &str, count: usize) -> String {
+    fn format_center(v: &str, count: usize, buf: &mut String) {
         let start = (count - v.len()) / 2;
         let end = count - v.len() - start;
-        format!("{}{}{}", Self::repeat(b' ', start), v, Self::repeat(b' ', end))
+
+        buf.extend(std::iter::repeat(' ').take(start));
+        *buf += v;
+        buf.extend(std::iter::repeat(' ').take(end));
     }
 
     fn repeat(s: u8, count: usize) -> String {
