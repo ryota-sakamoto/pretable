@@ -39,14 +39,13 @@ impl PreTable {
     pub fn add_body(&mut self, v: Vec<&str>) {
         self.body_length += 1;
         for n in 0..self.header_len {
-            let value = if v.len() > n {
-                v[n]
+            if v.len() > n {
+                let value = v[n];
+                if self.items[n].max_value_len < value.len() {
+                    self.items[n].max_value_len = value.len();
+                }
             } else {
-                ""
-            };
-            self.items[n].value.push(value.to_string());
-            if self.items[n].max_value_len < value.len() {
-                self.items[n].max_value_len = value.len();
+                self.items[n].value.push("".to_string());
             }
         }
     }
