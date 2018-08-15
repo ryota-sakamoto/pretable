@@ -39,11 +39,7 @@ impl PreTable {
     pub fn add_body(&mut self, v: Vec<&str>) {
         self.body_length += 1;
         for n in 0..self.header_len {
-            let value = if v.len() > n {
-                v[n]
-            } else {
-                ""
-            };
+            let value = if v.len() > n { v[n] } else { "" };
             self.items[n].value.push(value.to_string());
             if self.items[n].max_value_len < value.len() {
                 self.items[n].max_value_len = value.len();
@@ -52,30 +48,34 @@ impl PreTable {
     }
 
     pub fn line(&self) -> String {
-        let s: Vec<String> = self.items.iter().map(|item| {
-            let mut s = String::with_capacity(1 + item.max_value_len + 2);
-            s.push(self.corner_char);
-            s.extend(std::iter::repeat(self.line_char).take(item.max_value_len + 2));
-            s
-        }).collect();
+        let s: Vec<String> = self.items
+            .iter()
+            .map(|item| {
+                let mut s = String::with_capacity(1 + item.max_value_len + 2);
+                s.push(self.corner_char);
+                s.extend(std::iter::repeat(self.line_char).take(item.max_value_len + 2));
+                s
+            })
+            .collect();
 
         format!("{}{}", s.concat(), self.corner_char)
     }
 
     fn header(&self) -> String {
-        let s: Vec<String> = self.items.iter().map(|item| {
-            let mut s = self.vertical_char.to_string();
-            Self::format_center(&item.key, &item.max_value_len + 2, &mut s);
-            s
-        }).collect();
+        let s: Vec<String> = self.items
+            .iter()
+            .map(|item| {
+                let mut s = self.vertical_char.to_string();
+                Self::format_center(&item.key, &item.max_value_len + 2, &mut s);
+                s
+            })
+            .collect();
 
         format!("{}{}", s.concat(), self.vertical_char)
     }
 
     fn body(&self) -> Vec<String> {
-        let mut v: Vec<_> = self.items.iter().map(|item| {
-            item.value.iter()
-        }).collect();
+        let mut v: Vec<_> = self.items.iter().map(|item| item.value.iter()).collect();
         let value_len_vec: Vec<_> = self.items.iter().map(|item| item.max_value_len).collect();
 
         let mut vec = Vec::with_capacity(self.body_length);
@@ -90,10 +90,14 @@ impl PreTable {
             let mut result = String::new();
             for ref value in r {
                 result.push(self.vertical_char);
-                Self::format_center(match value {
-                    &Some(vv) => vv,
-                    &None => "",
-                }, value_len_vec[inc()] + 2, &mut result);
+                Self::format_center(
+                    match value {
+                        &Some(vv) => vv,
+                        &None => "",
+                    },
+                    value_len_vec[inc()] + 2,
+                    &mut result,
+                );
             }
             result.push(self.vertical_char);
             vec.push(result);
