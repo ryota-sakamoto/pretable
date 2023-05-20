@@ -2,6 +2,7 @@ pretable
 ===
 
 [![test](https://github.com/ryota-sakamoto/pretable/actions/workflows/test.yaml/badge.svg?branch=master)](https://github.com/ryota-sakamoto/pretable/actions/workflows/test.yaml)
+[![](https://img.shields.io/crates/v/pretable.svg)](https://crates.io/crates/pretable)
 
 You can create pretty table as follows.
 
