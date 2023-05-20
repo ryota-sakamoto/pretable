@@ -8,6 +8,7 @@ pub struct PreTable {
     line_char: char,
     vertical_char: char,
     corner_char: char,
+    default_alignment: Alignment,
 }
 
 impl PreTable {
@@ -21,11 +22,12 @@ impl PreTable {
             line_char: '-',
             vertical_char: '|',
             corner_char: '+',
+            default_alignment: Alignment::Center,
         }
     }
 
     pub fn add_header(&mut self, v: &str) {
-        self.add_header_with_alignment(v, Alignment::Center);
+        self.add_header_with_alignment(v, self.default_alignment);
     }
 
     pub fn add_header_with_alignment(&mut self, v: &str, alignment: Alignment) {
@@ -36,7 +38,14 @@ impl PreTable {
     pub fn set_header(&mut self, v: Vec<&str>) {
         self.items = Vec::new();
         for value in v {
-            self.add_header(value);
+            self.add_header_with_alignment(value, self.default_alignment);
+        }
+    }
+
+    pub fn set_header_with_alignment(&mut self, v: Vec<(&str, Alignment)>) {
+        self.items = Vec::new();
+        for value in v {
+            self.add_header_with_alignment(value.0, value.1);
         }
     }
 
@@ -159,16 +168,17 @@ impl PreTable {
         self.corner_char = c;
     }
 
+    pub fn set_default_alignment(&mut self, a: Alignment) {
+        self.default_alignment = a;
+    }
+
     fn format_align(v: &str, count: usize, alignment: Alignment, buf: &mut String) {
         let padding = count - v.len();
-
-        // Alignment::Center
         let start = match alignment {
             Alignment::Left => 1,
             Alignment::Center => padding / 2,
             Alignment::Right => padding - 1,
         };
-
         let end = padding - start;
 
         buf.extend(std::iter::repeat(' ').take(start));
