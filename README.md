@@ -1,6 +1,8 @@
 pretable
 ===
 
+[![test](https://github.com/ryota-sakamoto/pretable/actions/workflows/test.yaml/badge.svg?branch=master)](https://github.com/ryota-sakamoto/pretable/actions/workflows/test.yaml)
+
 You can create pretty table as follows.
 
 ```
