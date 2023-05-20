@@ -139,7 +139,7 @@ impl PreTable {
 
         let mut vec = Vec::with_capacity(self.body_length);
         for _ in 0..self.body_length {
-            let r = v.next();
+            let row = v.next();
             let mut n = 0;
             let mut inc = || {
                 n += 1;
@@ -147,16 +147,14 @@ impl PreTable {
             };
 
             let mut result = String::new();
-            for ref value in r {
+            for ref value in row {
                 result.push(self.vertical_char);
 
                 let item_index = inc();
+                let value = value.map_or("", |s| s);
 
                 Self::format_align(
-                    match value {
-                        &Some(vv) => vv,
-                        &None => "",
-                    },
+                    value,
                     value_len_vec[item_index] + 2,
                     self.items[item_index].alignment,
                     &mut result,
