@@ -6,5 +6,6 @@ repository = "https://github.com/ryota-sakamoto/pretable"
 keywords = ["table", "pretty"]
 license-file = "LICENSE"
 description = "show pretty table"
+edition = "2021"
 
 [dependencies]
