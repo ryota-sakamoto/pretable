@@ -20,10 +20,10 @@ $ cargo +nightly bench --bench bench
      Running benches/bench.rs (target/release/deps/bench-2f3d06edc693d389)
 
 running 4 tests
-test bench_output_100    ... bench:      21,374 ns/iter (+/- 1,035)
-test bench_output_1000   ... bench:     186,529 ns/iter (+/- 9,931)
-test bench_output_10000  ... bench:   2,251,791 ns/iter (+/- 541,291)
-test bench_output_100000 ... bench:  23,918,838 ns/iter (+/- 1,448,389)
+test bench_output_100    ... bench:      20,188 ns/iter (+/- 1,280)
+test bench_output_1000   ... bench:     185,939 ns/iter (+/- 15,162)
+test bench_output_10000  ... bench:   2,276,584 ns/iter (+/- 697,180)
+test bench_output_100000 ... bench:  23,073,557 ns/iter (+/- 2,902,075)
 
-test result: ok. 0 passed; 0 failed; 0 ignored; 4 measured; 0 filtered out; finished in 12.79s
+test result: ok. 0 passed; 0 failed; 0 ignored; 4 measured; 0 filtered out; finished in 14.92s
 ```

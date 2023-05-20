@@ -109,22 +109,26 @@ impl PreTable {
     }
 
     pub fn output(&self) -> String {
-        let mut s = format!("{}\n", self.line());
+        let mut buf = vec![];
+        let l = self.line();
+
+        buf.push(l.clone());
         if self.show_header && !self.items.is_empty() {
-            s += &format!("{}\n", self.header());
-            s += &format!("{}\n", self.line());
+            buf.push(self.header());
+            buf.push(l.clone());
         }
         let body = self.body();
         if self.is_body_split {
             for b in body {
-                s += &format!("{}\n", b);
-                s += &format!("{}\n", self.line());
+                buf.push(b);
+                buf.push(l.clone());
             }
         } else {
-            s += &format!("{}\n", body.join("\n"));
-            s += &format!("{}\n", self.line());
+            buf.push(body.join("\n"));
+            buf.push(l.clone());
         }
-        s
+
+        buf.join("\n")
     }
 
     pub fn show_header(&mut self, b: bool) {
@@ -213,8 +217,7 @@ mod tests {
 | key1 |    value1    | description1 |
 | key2 | long value 2 | description2 |
 | key3 |    value3    | description3 |
-+------+--------------+--------------+
-";
++------+--------------+--------------+";
         assert_eq!(actual, expected);
     }
 
@@ -230,8 +233,7 @@ mod tests {
 | key1 |    value1    | description1 |
 | key2 | long value 2 | description2 |
 | key3 |    value3    | description3 |
-+xxxxxx+xxxxxxxxxxxxxx+xxxxxxxxxxxxxx+
-";
++xxxxxx+xxxxxxxxxxxxxx+xxxxxxxxxxxxxx+";
         assert_eq!(actual, expected);
     }
 
@@ -247,8 +249,7 @@ x KEY  x    VALUE     x DESCRIPTION  x
 x key1 x    value1    x description1 x
 x key2 x long value 2 x description2 x
 x key3 x    value3    x description3 x
-+------+--------------+--------------+
-";
++------+--------------+--------------+";
         assert_eq!(actual, expected);
     }
 
@@ -264,8 +265,7 @@ x------x--------------x--------------x
 | key1 |    value1    | description1 |
 | key2 | long value 2 | description2 |
 | key3 |    value3    | description3 |
-x------x--------------x--------------x
-";
+x------x--------------x--------------x";
         assert_eq!(actual, expected);
     }
 
@@ -279,8 +279,7 @@ x------x--------------x--------------x
 | key1 |    value1    | description1 |
 | key2 | long value 2 | description2 |
 | key3 |    value3    | description3 |
-+------+--------------+--------------+
-";
++------+--------------+--------------+";
         assert_eq!(actual, expected);
     }
 
@@ -298,8 +297,7 @@ x------x--------------x--------------x
 | key2 | long value 2 | description2 |
 +------+--------------+--------------+
 | key3 |    value3    | description3 |
-+------+--------------+--------------+
-";
++------+--------------+--------------+";
         assert_eq!(actual, expected);
     }
 
