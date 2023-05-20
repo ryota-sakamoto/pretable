@@ -48,7 +48,8 @@ impl PreTable {
     }
 
     pub fn line(&self) -> String {
-        let s: Vec<String> = self.items
+        let s: Vec<String> = self
+            .items
             .iter()
             .map(|item| {
                 let mut s = String::with_capacity(1 + item.max_value_len + 2);
@@ -62,7 +63,8 @@ impl PreTable {
     }
 
     fn header(&self) -> String {
-        let s: Vec<String> = self.items
+        let s: Vec<String> = self
+            .items
             .iter()
             .map(|item| {
                 let mut s = self.vertical_char.to_string();
