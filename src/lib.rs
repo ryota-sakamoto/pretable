@@ -192,23 +192,87 @@ impl<'a> SliceItarator for Vec<std::slice::Iter<'a, String>> {
 mod tests {
     use super::PreTable;
 
-    #[test]
-    fn test_output() {
+    fn generate_test_table() -> PreTable {
         let mut table = PreTable::new();
         table.set_header(vec!["KEY", "VALUE", "DESCRIPTION"]);
         table.add_body(vec!["key1", "value1", "description1"]);
-        table.add_body(vec!["key2", "value2", "description2"]);
+        table.add_body(vec!["key2", "long value 2", "description2"]);
         table.add_body(vec!["key3", "value3", "description3"]);
 
+        table
+    }
+
+    #[test]
+    fn test_output() {
+        let table = generate_test_table();
+
         let actual = table.output();
-        let expected = "+------+--------+--------------+
-| KEY  | VALUE  | DESCRIPTION  |
-+------+--------+--------------+
-| key1 | value1 | description1 |
-| key2 | value2 | description2 |
-| key3 | value3 | description3 |
-+------+--------+--------------+
+        let expected = "+------+--------------+--------------+
+| KEY  |    VALUE     | DESCRIPTION  |
++------+--------------+--------------+
+| key1 |    value1    | description1 |
+| key2 | long value 2 | description2 |
+| key3 |    value3    | description3 |
++------+--------------+--------------+
 ";
         assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_set_line_char() {
+        let mut table = generate_test_table();
+        table.set_line_char('x');
+
+        let actual = table.output();
+        let expected = "+xxxxxx+xxxxxxxxxxxxxx+xxxxxxxxxxxxxx+
+| KEY  |    VALUE     | DESCRIPTION  |
++xxxxxx+xxxxxxxxxxxxxx+xxxxxxxxxxxxxx+
+| key1 |    value1    | description1 |
+| key2 | long value 2 | description2 |
+| key3 |    value3    | description3 |
++xxxxxx+xxxxxxxxxxxxxx+xxxxxxxxxxxxxx+
+";
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_set_vertical_char() {
+        let mut table = generate_test_table();
+        table.set_vertical_char('x');
+
+        let actual = table.output();
+        let expected = "+------+--------------+--------------+
+x KEY  x    VALUE     x DESCRIPTION  x
++------+--------------+--------------+
+x key1 x    value1    x description1 x
+x key2 x long value 2 x description2 x
+x key3 x    value3    x description3 x
++------+--------------+--------------+
+";
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_set_corner_char() {
+        let mut table = generate_test_table();
+        table.set_corner_char('x');
+
+        let actual = table.output();
+        let expected = "x------x--------------x--------------x
+| KEY  |    VALUE     | DESCRIPTION  |
+x------x--------------x--------------x
+| key1 |    value1    | description1 |
+| key2 | long value 2 | description2 |
+| key3 |    value3    | description3 |
+x------x--------------x--------------x
+";
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_format_center() {
+        let mut buf = String::new();
+        PreTable::format_center("abcde", 15, &mut buf);
+        assert_eq!(buf, "     abcde     ");
     }
 }
