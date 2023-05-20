@@ -1,6 +1,6 @@
 [package]
 name = "pretable"
-version = "0.4.1"
+version = "0.4.2"
 authors = ["ryota-sakamoto <sakamo.ryota+github@gmail.com>"]
 description = "show pretty table"
 documentation = "https://docs.rs/pretable"
