@@ -1,7 +1,6 @@
 #[derive(Debug)]
 pub struct PreTable {
     items: Vec<Item>,
-    header_len: usize,
     body_length: usize,
     show_header: bool,
     is_body_split: bool,
@@ -15,7 +14,6 @@ impl PreTable {
     pub fn new() -> Self {
         Self {
             items: Vec::new(),
-            header_len: 0,
             body_length: 0,
             show_header: true,
             is_body_split: false,
@@ -32,7 +30,6 @@ impl PreTable {
 
     pub fn add_header_with_alignment(&mut self, v: &str, alignment: Alignment) {
         self.items.push(Item::new(v, alignment));
-        self.header_len = self.items.len();
     }
 
     pub fn set_header(&mut self, v: Vec<&str>) {
@@ -51,7 +48,7 @@ impl PreTable {
 
     pub fn add_body(&mut self, v: Vec<&str>) {
         self.body_length += 1;
-        for n in 0..self.header_len {
+        for n in 0..self.items.len() {
             let value = if v.len() > n { v[n] } else { "" };
             self.items[n].value.push(value.to_string());
             if self.items[n].max_value_len < value.len() {
