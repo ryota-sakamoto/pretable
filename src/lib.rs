@@ -222,6 +222,23 @@ mod tests {
     }
 
     #[test]
+    fn test_skip_item() {
+        let mut table = PreTable::new();
+        table.set_header(vec!["KEY", "VALUE", "DESCRIPTION"]);
+        table.add_body(vec!["key1", "value1"]);
+        table.add_body(vec!["key2", "", "description2"]);
+
+        let actual = table.output();
+        let expected = "+------+--------+--------------+
+| KEY  | VALUE  | DESCRIPTION  |
++------+--------+--------------+
+| key1 | value1 |              |
+| key2 |        | description2 |
++------+--------+--------------+";
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn test_set_line_char() {
         let mut table = generate_test_table();
         table.set_line_char('x');
