@@ -270,6 +270,40 @@ x------x--------------x--------------x
     }
 
     #[test]
+    fn test_show_header() {
+        let mut table = generate_test_table();
+        table.show_header(false);
+
+        let actual = table.output();
+        let expected = "+------+--------------+--------------+
+| key1 |    value1    | description1 |
+| key2 | long value 2 | description2 |
+| key3 |    value3    | description3 |
++------+--------------+--------------+
+";
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
+    fn test_is_body_split() {
+        let mut table = generate_test_table();
+        table.is_body_split(true);
+
+        let actual = table.output();
+        let expected = "+------+--------------+--------------+
+| KEY  |    VALUE     | DESCRIPTION  |
++------+--------------+--------------+
+| key1 |    value1    | description1 |
++------+--------------+--------------+
+| key2 | long value 2 | description2 |
++------+--------------+--------------+
+| key3 |    value3    | description3 |
++------+--------------+--------------+
+";
+        assert_eq!(actual, expected);
+    }
+
+    #[test]
     fn test_format_center() {
         let mut buf = String::new();
         PreTable::format_center("abcde", 15, &mut buf);
