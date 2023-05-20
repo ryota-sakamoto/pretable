@@ -187,3 +187,28 @@ impl<'a> SliceItarator for Vec<std::slice::Iter<'a, String>> {
         values
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use super::PreTable;
+
+    #[test]
+    fn test_output() {
+        let mut table = PreTable::new();
+        table.set_header(vec!["KEY", "VALUE", "DESCRIPTION"]);
+        table.add_body(vec!["key1", "value1", "description1"]);
+        table.add_body(vec!["key2", "value2", "description2"]);
+        table.add_body(vec!["key3", "value3", "description3"]);
+
+        let actual = table.output();
+        let expected = "+------+--------+--------------+
+| KEY  | VALUE  | DESCRIPTION  |
++------+--------+--------------+
+| key1 | value1 | description1 |
+| key2 | value2 | description2 |
+| key3 | value3 | description3 |
++------+--------+--------------+
+";
+        assert_eq!(actual, expected);
+    }
+}
