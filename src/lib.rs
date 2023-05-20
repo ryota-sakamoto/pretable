@@ -1,3 +1,4 @@
+/// A `PreTable` struct used for table representation
 #[derive(Debug)]
 pub struct PreTable {
     items: Vec<Item>,
@@ -11,6 +12,7 @@ pub struct PreTable {
 }
 
 impl PreTable {
+    /// Creates a new instance of `PreTable`
     pub fn new() -> Self {
         Self {
             items: Vec::new(),
@@ -24,14 +26,33 @@ impl PreTable {
         }
     }
 
+    /// Adds a header to the table with default alignment
     pub fn add_header(&mut self, v: &str) {
         self.add_header_with_alignment(v, self.default_alignment);
     }
 
+    /// Adds a header with a specified alignment
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use pretable::{Alignment, PreTable};
+    /// let mut table = PreTable::new();
+    /// table.add_header_with_alignment("KEY", Alignment::Left);
+    /// ```
     pub fn add_header_with_alignment(&mut self, v: &str, alignment: Alignment) {
         self.items.push(Item::new(v, alignment));
     }
 
+    /// Sets the headers of the table with default alignment
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use pretable::{Alignment, PreTable};
+    /// let mut table = PreTable::new();
+    /// table.set_header(vec!["KEY", "VALUE", "DESCRIPTION"]);
+    /// ```
     pub fn set_header(&mut self, v: Vec<&str>) {
         self.items = Vec::new();
         for value in v {
@@ -39,6 +60,19 @@ impl PreTable {
         }
     }
 
+    /// Sets the headers of the table with a specified alignment
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use pretable::{Alignment, PreTable};
+    /// let mut table = PreTable::new();
+    /// table.set_header_with_alignment(vec![
+    ///     ("KEY", Alignment::Left),
+    ///     ("VALUE", Alignment::Center),
+    ///     ("DESCRIPTION", Alignment::Right),
+    /// ]);
+    /// ```
     pub fn set_header_with_alignment(&mut self, v: Vec<(&str, Alignment)>) {
         self.items = Vec::new();
         for value in v {
@@ -46,6 +80,16 @@ impl PreTable {
         }
     }
 
+    /// Adds a row to the body of the table
+    ///
+    /// # Examples
+    ///
+    /// ```
+    /// # use pretable::{Alignment, PreTable};
+    /// let mut table = PreTable::new();
+    /// table.set_header(vec!["KEY", "VALUE", "DESCRIPTION"]);
+    /// table.add_body(vec!["key1", "value1", "description1"]);
+    /// ```
     pub fn add_body(&mut self, v: Vec<&str>) {
         self.body_length += 1;
         for n in 0..self.items.len() {
@@ -57,6 +101,7 @@ impl PreTable {
         }
     }
 
+    /// Generates a line string based on the current state of table
     pub fn line(&self) -> String {
         let s: Vec<String> = self
             .items
@@ -72,6 +117,7 @@ impl PreTable {
         format!("{}{}", s.concat(), self.corner_char)
     }
 
+    /// Formats and returns the header as a string
     fn header(&self) -> String {
         let s: Vec<String> = self
             .items
@@ -86,6 +132,7 @@ impl PreTable {
         format!("{}{}", s.concat(), self.vertical_char)
     }
 
+    /// Formats and returns the body as a vector of strings
     fn body(&self) -> Vec<String> {
         let mut v: Vec<_> = self.items.iter().map(|item| item.value.iter()).collect();
         let value_len_vec: Vec<_> = self.items.iter().map(|item| item.max_value_len).collect();
@@ -122,6 +169,7 @@ impl PreTable {
         vec
     }
 
+    /// Returns the complete table as a string
     pub fn output(&self) -> String {
         let mut buf = vec![];
         let l = self.line();
@@ -145,30 +193,37 @@ impl PreTable {
         buf.join("\n")
     }
 
-    pub fn show_header(&mut self, b: bool) {
+    /// Decides whether to show the header in output
+    pub fn set_show_header(&mut self, b: bool) {
         self.show_header = b;
     }
 
-    pub fn is_body_split(&mut self, b: bool) {
+    /// Decides whether to split the body in output
+    pub fn set_body_split(&mut self, b: bool) {
         self.is_body_split = b;
     }
 
+    /// Sets the character used for line separation
     pub fn set_line_char(&mut self, c: char) {
         self.line_char = c;
     }
 
+    /// Sets the character used for vertical separation
     pub fn set_vertical_char(&mut self, c: char) {
         self.vertical_char = c;
     }
 
+    /// Sets the character used for corners
     pub fn set_corner_char(&mut self, c: char) {
         self.corner_char = c;
     }
 
+    /// Sets the alignment used for format align
     pub fn set_default_alignment(&mut self, a: Alignment) {
         self.default_alignment = a;
     }
 
+    /// Helper function to format string according to alignment
     fn format_align(v: &str, count: usize, alignment: Alignment, buf: &mut String) {
         let padding = count - v.len();
         let start = match alignment {
@@ -184,6 +239,7 @@ impl PreTable {
     }
 }
 
+/// An `Item` struct represents a column in the table
 #[derive(Debug)]
 pub struct Item {
     key: String,
@@ -203,6 +259,7 @@ impl Item {
     }
 }
 
+/// An enum for alignment options
 #[derive(Debug, Clone, Copy)]
 pub enum Alignment {
     Center,
@@ -319,9 +376,9 @@ x------x--------------x--------------x";
     }
 
     #[test]
-    fn test_show_header() {
+    fn test_set_show_header() {
         let mut table = generate_test_table();
-        table.show_header(false);
+        table.set_show_header(false);
 
         let actual = table.output();
         let expected = "+------+--------------+--------------+
@@ -333,9 +390,9 @@ x------x--------------x--------------x";
     }
 
     #[test]
-    fn test_is_body_split() {
+    fn test_set_body_split() {
         let mut table = generate_test_table();
-        table.is_body_split(true);
+        table.set_body_split(true);
 
         let actual = table.output();
         let expected = "+------+--------------+--------------+
