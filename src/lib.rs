@@ -108,7 +108,7 @@ impl PreTable {
         vec
     }
 
-    pub fn output(self) -> String {
+    pub fn output(&self) -> String {
         let mut s = format!("{}\n", self.line());
         if self.show_header && !self.items.is_empty() {
             s += &format!("{}\n", self.header());
