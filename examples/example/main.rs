@@ -1,29 +1,17 @@
 extern crate pretable;
 
-use pretable::PreTable;
+use pretable::{Alignment, PreTable};
 
 fn main() {
     let mut table = PreTable::new();
-    table.set_header(vec!["REPOSITORY", "TAG", "IMAGE ID", "CREATED", "SIZE"]);
-    table.add_body(vec![
-        "ubuntu",
-        "18.04",
-        "452a96d81c30",
-        "6 weeks ago",
-        "79.6MB",
-    ]);
-    table.add_body(vec![
-        "ubuntu",
-        "18.04",
-        "452a96d81c30",
-        "7 weeks ago",
-        "79.6MB",
-    ]);
-    // table.add_body(vec!["name1dsfsdf", "vdsfdsfalue"]);
-    // table.show_header(false);
-    // table.is_body_split(true);
-    // table.set_line_char(' ');
-    // table.set_vertical_char(' ');
-    // table.set_corner_char(' ');
+
+    table.add_header_with_alignment("NAME", Alignment::Left);
+    table.add_header_with_alignment("FORMAL", Alignment::Center);
+    table.add_header_with_alignment("HEIGHT", Alignment::Right);
+
+    table.add_body(vec!["Everest", "Chomolungma", "8848m"]);
+    table.add_body(vec!["K2", "Karakorum No.2", "8611m"]);
+    table.add_body(vec!["Kanchenjunga", "", "8505m"]);
+
     println!("{}", table.output());
 }

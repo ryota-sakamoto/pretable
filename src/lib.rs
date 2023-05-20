@@ -25,7 +25,11 @@ impl PreTable {
     }
 
     pub fn add_header(&mut self, v: &str) {
-        self.items.push(Item::new(v));
+        self.add_header_with_alignment(v, Alignment::Center);
+    }
+
+    pub fn add_header_with_alignment(&mut self, v: &str, alignment: Alignment) {
+        self.items.push(Item::new(v, alignment));
         self.header_len = self.items.len();
     }
 
@@ -68,7 +72,7 @@ impl PreTable {
             .iter()
             .map(|item| {
                 let mut s = self.vertical_char.to_string();
-                Self::format_center(&item.key, &item.max_value_len + 2, &mut s);
+                Self::format_align(&item.key, &item.max_value_len + 2, item.alignment, &mut s);
                 s
             })
             .collect();
@@ -92,12 +96,16 @@ impl PreTable {
             let mut result = String::new();
             for ref value in r {
                 result.push(self.vertical_char);
-                Self::format_center(
+
+                let item_index = inc();
+
+                Self::format_align(
                     match value {
                         &Some(vv) => vv,
                         &None => "",
                     },
-                    value_len_vec[inc()] + 2,
+                    value_len_vec[item_index] + 2,
+                    self.items[item_index].alignment,
                     &mut result,
                 );
             }
@@ -151,9 +159,17 @@ impl PreTable {
         self.corner_char = c;
     }
 
-    fn format_center(v: &str, count: usize, buf: &mut String) {
-        let start = (count - v.len()) / 2;
-        let end = count - v.len() - start;
+    fn format_align(v: &str, count: usize, alignment: Alignment, buf: &mut String) {
+        let padding = count - v.len();
+
+        // Alignment::Center
+        let start = match alignment {
+            Alignment::Left => 1,
+            Alignment::Center => padding / 2,
+            Alignment::Right => padding - 1,
+        };
+
+        let end = padding - start;
 
         buf.extend(std::iter::repeat(' ').take(start));
         *buf += v;
@@ -166,16 +182,25 @@ pub struct Item {
     key: String,
     value: Vec<String>,
     max_value_len: usize,
+    alignment: Alignment,
 }
 
 impl Item {
-    fn new(key: &str) -> Self {
+    fn new(key: &str, alignment: Alignment) -> Self {
         Self {
             key: key.to_string(),
             value: Vec::new(),
             max_value_len: key.len(),
+            alignment: alignment,
         }
     }
+}
+
+#[derive(Debug, Clone, Copy)]
+pub enum Alignment {
+    Center,
+    Left,
+    Right,
 }
 
 trait SliceItarator {
@@ -194,7 +219,7 @@ impl<'a> SliceItarator for Vec<std::slice::Iter<'a, String>> {
 
 #[cfg(test)]
 mod tests {
-    use super::PreTable;
+    use super::{Alignment, PreTable};
 
     fn generate_test_table() -> PreTable {
         let mut table = PreTable::new();
@@ -319,9 +344,23 @@ x------x--------------x--------------x";
     }
 
     #[test]
-    fn test_format_center() {
+    fn test_format_align_center() {
         let mut buf = String::new();
-        PreTable::format_center("abcde", 15, &mut buf);
+        PreTable::format_align("abcde", 15, Alignment::Center, &mut buf);
         assert_eq!(buf, "     abcde     ");
+    }
+
+    #[test]
+    fn test_format_align_left() {
+        let mut buf = String::new();
+        PreTable::format_align("abcde", 15, Alignment::Left, &mut buf);
+        assert_eq!(buf, " abcde         ");
+    }
+
+    #[test]
+    fn test_format_align_right() {
+        let mut buf = String::new();
+        PreTable::format_align("abcde", 15, Alignment::Right, &mut buf);
+        assert_eq!(buf, "         abcde ");
     }
 }
