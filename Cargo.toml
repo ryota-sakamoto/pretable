@@ -2,10 +2,12 @@
 name = "pretable"
 version = "0.4.1"
 authors = ["ryota-sakamoto <sakamo.ryota+github@gmail.com>"]
-repository = "https://github.com/ryota-sakamoto/pretable"
-keywords = ["table", "pretty"]
-license-file = "LICENSE"
 description = "show pretty table"
+documentation = "https://docs.rs/pretable"
+repository = "https://github.com/ryota-sakamoto/pretable"
+keywords = ["table", "pretty", "util"]
+license = "MIT"
+license-file = "LICENSE"
 edition = "2021"
 
 [dependencies]
